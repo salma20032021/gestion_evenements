@@ -52,16 +52,15 @@
     <h1>🎉 Gestion des Événements</h1>
     <ul>
         <li>
-            <a href="create_event.php">Créer un événement</a>
+            <a href="/gestion_evenements/views/events/create_event.php">Créer un événement</a>
         </li>
         <li>
-            <a href="participants/register_participant.php">Inscrire un participant</a>
+            <a href="/gestion_evenements/views/participants/register_participant.php">Inscrire un participant</a>
         </li>
         <li>
-            <a href="inscriptions/list_inscription.php">Liste des inscriptions</a>
+            <a href="/gestion_evenements/views/inscriptions/list_inscriptions.php">Liste des inscriptions</a>
         </li>
     </ul>
 </body>
 </html>
-
 

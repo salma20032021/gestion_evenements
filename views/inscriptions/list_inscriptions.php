@@ -1,15 +1,21 @@
 <?php
+$inscriptions = [];
+
 try {
     $conn = new PDO("mysql:host=localhost;dbname=gestion_evenements", "root", "");
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     $sql = "SELECT p.nom, p.email, e.titre, i.date_inscription
             FROM inscriptions i
             JOIN participants p ON i.participant_id = p.id
             JOIN events e ON i.event_id = e.id
             ORDER BY i.date_inscription DESC";
-    $inscriptions = $conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+
+    $stmt = $conn->query($sql);
+    $inscriptions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 } catch (PDOException $e) {
-    echo "<p style='color:red;'>Erreur : " . $e->getMessage() . "</p>";
+    echo "<p style='color:red;'>❌ Erreur : " . htmlspecialchars($e->getMessage()) . "</p>";
 }
 ?>
 
@@ -70,6 +76,11 @@ try {
         tr:hover {
             background-color: #f1f1f1;
         }
+
+        .empty-msg {
+            color: #c0392b;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -77,24 +88,26 @@ try {
     <h2>📋 Liste des inscriptions</h2>
     <a class="back-btn" href="../index.php">⬅ Retour à l'accueil</a>
 
-    <table>
-        <tr>
-            <th>Nom</th>
-            <th>Email</th>
-            <th>Événement</th>
-            <th>Date d'inscription</th>
-        </tr>
-        <?php foreach ($inscriptions as $ins): ?>
-        <tr>
-            <td><?= htmlspecialchars($ins['nom']) ?></td>
-            <td><?= htmlspecialchars($ins['email']) ?></td>
-            <td><?= htmlspecialchars($ins['titre']) ?></td>
-            <td><?= $ins['date_inscription'] ?></td>
-        </tr>
-        <?php endforeach; ?>
-    </table>
+    <?php if (count($inscriptions) > 0): ?>
+        <table>
+            <tr>
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Événement</th>
+                <th>Date d'inscription</th>
+            </tr>
+            <?php foreach ($inscriptions as $ins): ?>
+            <tr>
+                <td><?= htmlspecialchars($ins['nom']) ?></td>
+                <td><?= htmlspecialchars($ins['email']) ?></td>
+                <td><?= htmlspecialchars($ins['titre']) ?></td>
+                <td><?= htmlspecialchars($ins['date_inscription']) ?></td>
+            </tr>
+            <?php endforeach; ?>
+        </table>
+    <?php else: ?>
+        <p class="empty-msg">Aucune inscription trouvée.</p>
+    <?php endif; ?>
 
 </body>
 </html>
-
-

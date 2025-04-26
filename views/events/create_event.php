@@ -1,8 +1,11 @@
 <?php
-if (isset($_POST['ajouter'])) {
-    $titre = $_POST['titre'];
-    $date = $_POST['date_evenement'];
-    $description = $_POST['description'];
+$message = "";
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajouter'])) {
+    // Sécurisation des entrées utilisateur
+    $titre = htmlspecialchars(trim($_POST['titre']));
+    $date = htmlspecialchars(trim($_POST['date_evenement']));
+    $description = htmlspecialchars(trim($_POST['description']));
 
     try {
         $conn = new PDO("mysql:host=localhost;dbname=gestion_evenements", "root", "");
@@ -11,9 +14,9 @@ if (isset($_POST['ajouter'])) {
         $stmt = $conn->prepare("INSERT INTO events (titre, date_evenement, description) VALUES (?, ?, ?)");
         $stmt->execute([$titre, $date, $description]);
 
-        echo "<p style='color:green;'>✅ Événement ajouté avec succès !</p>";
+        $message = "<p style='color:green;'>✅ Événement ajouté avec succès !</p>";
     } catch (PDOException $e) {
-        echo "<p style='color:red;'>❌ Erreur : " . $e->getMessage() . "</p>";
+        $message = "<p style='color:red;'>❌ Erreur : " . $e->getMessage() . "</p>";
     }
 }
 ?>
@@ -83,12 +86,21 @@ if (isset($_POST['ajouter'])) {
         .back-btn:hover {
             background-color: #2980b9;
         }
+
+        .message {
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
 
-    <a class="back-btn" href="index.php">⬅ Retour à l'accueil</a>
+<a class="back-btn" href="/gestion_evenements/views/index.php">⬅ Retour à l'accueil</a>
+
     <h2>Créer un événement</h2>
+
+    <?php if (!empty($message)) : ?>
+        <div class="message"><?php echo $message; ?></div>
+    <?php endif; ?>
 
     <form method="post" action="">
         <label for="titre">Titre :</label>
@@ -105,6 +117,7 @@ if (isset($_POST['ajouter'])) {
 
 </body>
 </html>
+
 
 
 
